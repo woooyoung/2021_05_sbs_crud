@@ -13,6 +13,12 @@ public class ArticleController extends Controller {
 	private String command;
 	private String actionMethodName;
 
+	public ArticleController(Scanner sc) {
+		this.sc = sc;
+
+		articles = new ArrayList<Article>();
+	}
+
 	public void doAction(String command, String actionMethodName) {
 		this.command = command;
 		this.actionMethodName = actionMethodName;
@@ -41,7 +47,16 @@ public class ArticleController extends Controller {
 		this.articles = articles;
 	}
 
-	public void doWrite() {
+	public void makeTestData() {
+		System.out.println("테스트를 위한 데이터를 생성합니다.");
+
+		articles.add(new Article(1, Util.getNowDateStr(), "제목1", "내용1", 11));
+		articles.add(new Article(2, Util.getNowDateStr(), "제목2", "내용2", 22));
+		articles.add(new Article(3, Util.getNowDateStr(), "제목3", "내용3", 33));
+
+	}
+
+	private void doWrite() {
 		int id = articles.size() + 1;
 		String regDate = Util.getNowDateStr();
 		System.out.printf("제목 : ");
@@ -56,7 +71,7 @@ public class ArticleController extends Controller {
 
 	}
 
-	public void showList() {
+	private void showList() {
 
 		if (articles.size() == 0) {
 			System.out.println("게시물이 없습니다");
@@ -91,7 +106,7 @@ public class ArticleController extends Controller {
 
 	}
 
-	public void showDetail() {
+	private void showDetail() {
 		String[] commandBits = command.split(" ");
 		int id = Integer.parseInt(commandBits[2]);
 
@@ -109,6 +124,45 @@ public class ArticleController extends Controller {
 		System.out.printf("제목 : %s\n", foundArticle.title);
 		System.out.printf("내용 : %s\n", foundArticle.body);
 		System.out.printf("조회수 : %d\n", foundArticle.hit);
+
+	}
+
+	private void doModify() {
+		String[] commandBits = command.split(" ");
+		int id = Integer.parseInt(commandBits[2]);
+
+		Article foundArticle = getArticleById(id);
+
+		if (foundArticle == null) {
+			System.out.printf("%d번 게시물은 존재하지 않습니다.\n", id);
+			return;
+		}
+
+		System.out.printf("새 제목 : ");
+		String title = sc.nextLine();
+		System.out.printf("새 내용 : ");
+		String body = sc.nextLine();
+
+		foundArticle.title = title;
+		foundArticle.body = body;
+
+		System.out.printf("%d번 게시물이 수정되었습니다.\n", id);
+
+	}
+
+	private void doDelete() {
+		String[] commandBits = command.split(" ");
+		int id = Integer.parseInt(commandBits[2]);
+
+		int foundIndex = getArticleIndexById(id);
+
+		if (foundIndex == -1) {
+			System.out.printf("%d번 게시물은 존재하지 않습니다.\n", id);
+			return;
+		}
+
+		articles.remove(foundIndex);
+		System.out.printf("%d번 게시물이 삭제되었습니다.\n", id);
 
 	}
 
@@ -153,45 +207,6 @@ public class ArticleController extends Controller {
 //
 //		return null;
 //	}
-
-	public void doModify() {
-		String[] commandBits = command.split(" ");
-		int id = Integer.parseInt(commandBits[2]);
-
-		Article foundArticle = getArticleById(id);
-
-		if (foundArticle == null) {
-			System.out.printf("%d번 게시물은 존재하지 않습니다.\n", id);
-			return;
-		}
-
-		System.out.printf("새 제목 : ");
-		String title = sc.nextLine();
-		System.out.printf("새 내용 : ");
-		String body = sc.nextLine();
-
-		foundArticle.title = title;
-		foundArticle.body = body;
-
-		System.out.printf("%d번 게시물이 수정되었습니다.\n", id);
-
-	}
-
-	public void doDelete() {
-		String[] commandBits = command.split(" ");
-		int id = Integer.parseInt(commandBits[2]);
-
-		int foundIndex = getArticleIndexById(id);
-
-		if (foundIndex == -1) {
-			System.out.printf("%d번 게시물은 존재하지 않습니다.\n", id);
-			return;
-		}
-
-		articles.remove(foundIndex);
-		System.out.printf("%d번 게시물이 삭제되었습니다.\n", id);
-
-	}
 
 //	for (int i = 0; i < articles.size(); i++) {
 //	Article article = articles.get(i);

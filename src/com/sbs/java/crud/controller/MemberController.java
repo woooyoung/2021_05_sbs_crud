@@ -1,5 +1,6 @@
 package com.sbs.java.crud.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,6 +13,12 @@ public class MemberController extends Controller {
 	private List<Member> members;
 	private String command;
 	private String actionMethodName;
+
+	public MemberController(Scanner sc) {
+		this.sc = sc;
+
+		members = new ArrayList<Member>();
+	}
 
 	public void doAction(String command, String actionMethodName) {
 		this.command = command;
@@ -50,7 +57,7 @@ public class MemberController extends Controller {
 		return -1;
 	}
 
-	public void doJoin() {
+	private void doJoin() {
 		int id = members.size() + 1;
 		String regDate = Util.getNowDateStr();
 
